@@ -21,13 +21,13 @@ public class ClusterExampleTest {
     CompletableFuture<AtomixReplica[]> clusterFuture = CLUSTER_EXAMPLE.buildClusterOfTwoNodes();
 
     //Assign task to test built cluster and wait until testing finish
-    Boolean isServerSuccessfullyTestedAndAccomplished = clusterFuture.thenCompose(this::testCluster).join();
+    Boolean isServerSuccessfullyTestedAndAccomplished = clusterFuture.thenCompose(this::testClusterAvailability).join();
 
     //Check that cluster built, tested and accomplished successfully
     assertTrue(isServerSuccessfullyTestedAndAccomplished);
   }
 
-  private CompletableFuture<Boolean> testCluster(AtomixReplica[] cluster) {
+  private CompletableFuture<Boolean> testClusterAvailability(AtomixReplica[] cluster) {
 
     assertEquals(2, cluster.length);
     assertTrue(Objects.nonNull(cluster[0]));

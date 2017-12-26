@@ -8,7 +8,10 @@ import io.atomix.copycat.server.storage.Storage;
 import io.atomix.copycat.server.storage.StorageLevel;
 
 /**
- * Simple class that produce method to build Atomix replicas
+ * Simple class that produce method to build Atomix replicas.
+ *
+ * Detailed description of all available replica configuration you can
+ * find on official website : http://atomix.io/atomix/docs/configuration/
  */
 public class AtomixServer {
 
