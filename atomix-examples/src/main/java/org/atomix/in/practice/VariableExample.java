@@ -30,4 +30,5 @@ public class VariableExample {
 
     return replica.<T>getValue(key).thenCompose(distributedValue -> distributedValue.onChange(listener));
   }
+
 }
