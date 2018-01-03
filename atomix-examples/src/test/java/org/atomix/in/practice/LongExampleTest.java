@@ -93,4 +93,49 @@ public class LongExampleTest {
 
     assertEquals(Long.valueOf(90), result);
   }
+
+  @Test
+  public void concurrentModificationDecrement() {
+
+    ExecutorService threadPool = Executors.newFixedThreadPool(2);
+
+    LONG_EXAMPLE.setValue(cluster[0], VALUE_KEY, 50L).join();
+
+    List<Future<Long>> results = new ArrayList<>();
+
+    //Worker 1 : add 10 tasks to make parallel incrementing
+    new Thread() {
+      @Override
+      public synchronized void start() {
+        for (int i = 0; i < 10; i++) {
+          results.add(threadPool.submit(() ->
+              LONG_EXAMPLE.incrementAndGetValue(cluster[new Random().nextInt(1)], VALUE_KEY).join()));
+        }
+      }
+    }.start();
+
+    //Worker 2 : add 15 tasks to make parallel decrementing
+    new Thread() {
+      @Override
+      public synchronized void start() {
+        for (int i = 0; i < 15; i++) {
+          results.add(threadPool.submit(() ->
+              LONG_EXAMPLE.decrementAndGetValue(cluster[new Random().nextInt(1)], VALUE_KEY).join()));
+        }
+      }
+    }.start();
+
+    //Wait all tasks
+    results.forEach(future -> {
+      try {
+        future.get();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    });
+
+    Long result = LONG_EXAMPLE.getValue(cluster[1], VALUE_KEY).join();
+
+    assertEquals(Long.valueOf(45), result);
+  }
 }
